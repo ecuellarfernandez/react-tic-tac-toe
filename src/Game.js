@@ -1,14 +1,30 @@
-function Square(){
+import React, { useState } from 'react'
+
+function Square({ value, onClick }){
     return(
-        <button className="square">
-            {/*TODO*/}
+        <button
+            className="square"
+            onClick={onClick}
+        >
+            {value}
         </button>
     )
 }
 
 function Board(){
+    const [squares, setSquares] = useState( Array(9).fill(null) )
+
+    function handleClick(i){
+        const squaresCopy = squares.slice()
+        squaresCopy[i] = 'X';
+        setSquares(squaresCopy)
+    }
+
     function renderSquare(i){
-        return <Square />
+        return <Square 
+                value={squares[i]}
+                onClick={()=> handleClick(i)}
+                />
     }
 
     const status = 'Next Player: X';
