@@ -13,11 +13,13 @@ function Square({ value, onClick }){
 
 function Board(){
     const [squares, setSquares] = useState( Array(9).fill(null) )
+    const [xIsNext, setNext] = useState(true)
 
     function handleClick(i){
-        const squaresCopy = squares.slice()
-        squaresCopy[i] = 'X';
-        setSquares(squaresCopy)
+        const squaresCopy = squares.slice();
+        squaresCopy[i] = xIsNext ? 'X' : 'O';
+        setSquares(squaresCopy);
+        setNext(!xIsNext);
     }
 
     function renderSquare(i){
