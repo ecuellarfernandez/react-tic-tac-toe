@@ -29,7 +29,7 @@ function Board(){
                 />
     }
 
-    const status = 'Next Player: X';
+    const status = `Next Player: ${xIsNext ? 'X' : 'O'}`;
     return(
         <div>
             <div className="status">{status}</div>
