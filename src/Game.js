@@ -11,39 +11,18 @@ function Square({ value, onClick }){
     )
 }
 
-function Board(){
-    const [squares, setSquares] = useState( Array(9).fill(null) )
-    const [xIsNext, setNext] = useState(true)
-
-    const winner = calculateWinner(squares);
-    let status;
-
-    if(winner) {
-        status = 'Winner ' + winner;
-    }else{
-        status = 'Next player ' + (xIsNext ? 'X' : 'O')
-    }
-
-    function handleClick(i){
-        const squaresCopy = squares.slice();
-        if (calculateWinner(squares) || squares[i]) {
-            return;
-        }
-        squaresCopy[i] = xIsNext ? 'X' : 'O';
-        setSquares(squaresCopy);
-        setNext(prevState=>!prevState);
-    }
+function Board({ squares, onClick }){
 
     function renderSquare(i){
         return <Square 
-                value={squares[i]}
-                onClick={()=> handleClick(i)}
+                    value={squares[i]}
+                    onClick={()=> onClick(i)}
                 />
     }
 
     return(
         <div>
-            <div className="status">{status}</div>
+            {/* <div className="status">{status}</div> */}
 
             <div className="board-row">
                 {renderSquare(0)}
@@ -65,15 +44,46 @@ function Board(){
 }
 
 export default function Game(){
+
+    const [history, setHistory] = useState( [ Array(9).fill(null) ] );
+    const [xIsNext, setNext] = useState(true); 
+
+    function handleClick(i){
+        const current = history[history.length - 1];
+        const squares = current.slice();
+        if (calculateWinner(squares) || squares[i]) {
+            return;
+        }
+        squares[i] = xIsNext ? 'X' : 'O';
+        setHistory( history.concat( [squares] ) );
+        setNext(prevState=>!prevState);
+    }
+
+    const current = history[history.length -1];
+
+    const winner = calculateWinner(current);
+    let status;
+
+    if(winner) {
+        status = 'Winner ' + winner;
+    }else{
+        status = 'Next player ' + (xIsNext ? 'X' : 'O')
+    }
+    
+
     return(
         <div className="game">
 
             <div className="game-board">
-                <Board />
+                <Board 
+                    squares={current}
+                    xIsNext={xIsNext}
+                    onClick={handleClick}
+                />
             </div>
 
             <div className="game-info">
-                <div>{/* Status */ }</div>
+                <div>{status}</div>
                 <div>{/* TODO */ }</div>
             </div>
 
