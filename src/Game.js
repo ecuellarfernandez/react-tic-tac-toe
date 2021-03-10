@@ -22,8 +22,6 @@ function Board({ squares, onClick }){
 
     return(
         <div>
-            {/* <div className="status">{status}</div> */}
-
             <div className="board-row">
                 {renderSquare(0)}
                 {renderSquare(1)}
@@ -46,20 +44,44 @@ function Board({ squares, onClick }){
 export default function Game(){
 
     const [history, setHistory] = useState( [ Array(9).fill(null) ] );
-    const [xIsNext, setNext] = useState(true); 
+    const [xIsNext, setNext] = useState(true);
+    const [stepNumber, setStepNumber] = useState(0);
 
     function handleClick(i){
-        const current = history[history.length - 1];
+        const allHistory = history.slice( 0, stepNumber + 1 );
+        const current = allHistory[ allHistory.length - 1 ];
         const squares = current.slice();
         if (calculateWinner(squares) || squares[i]) {
             return;
         }
         squares[i] = xIsNext ? 'X' : 'O';
-        setHistory( history.concat( [squares] ) );
-        setNext(prevState=>!prevState);
+        setHistory( allHistory.concat( [squares] ) );
+        setStepNumber( allHistory.length );
+        setNext( prevState=> !prevState );
     }
 
-    const current = history[history.length -1];
+    function jumpTo(step){
+        setStepNumber( step );
+        setNext( step % 2 === 0 );
+    }
+
+    const moves = history.map((step, move)=>{
+        const description = move ?
+                            `Go to move #${move}` :
+                            `Go to start`;
+        return (
+            <li key={move}>
+                <button 
+                    onClick={()=>jumpTo(move)}
+                >
+                    {description}
+                </button>
+            </li>
+        )
+    })
+
+
+    const current = history[stepNumber];
 
     const winner = calculateWinner(current);
     let status;
@@ -69,7 +91,7 @@ export default function Game(){
     }else{
         status = 'Next player ' + (xIsNext ? 'X' : 'O')
     }
-    
+
 
     return(
         <div className="game">
@@ -84,7 +106,7 @@ export default function Game(){
 
             <div className="game-info">
                 <div>{status}</div>
-                <div>{/* TODO */ }</div>
+                <ol>{moves}</ol>
             </div>
 
         </div>
